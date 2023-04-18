@@ -1,28 +1,39 @@
+import { useEffect } from "react"
 import {useState} from "react"
+import WineCard from "./WineCard"
 
 
 export default function WineList(){
 
     const[theWines, setTheWines] = useState()
-
+    const[color,setColor]= useState('reds')
+    
+    
+    
     const getWines = () => {
-        fetch('https://api.sampleapis.com/wines/reds')
+        fetch(`https://api.sampleapis.com/wines/${color}`)
         .then(response => response.json())
         .then(data => setTheWines(data))
         .catch(alert)
     }
 
+    useEffect(()=> {
+        getWines()
+    },[color])
+
     return(
-        <section className="wine-list">
+                <section className="wine-list">
+        <div className="buttons">
+                <button onclick={()=> setColor('reds')}>Reds</button>
+                <button onclick={()=> setColor('whites')}>Whites</button>
+                <button onclick={()=> setColor('sparkling')}>Sparkling</button>
+                <button onclick={()=> setColor('rose')}>Rose</button>
+            </div>
             {(!theWines)
-            ?<button onClick={getWines}>Get Wine List</button>
+            ?<h2>Loading...</h2>
             : theWines.map(wine => (
-                <div key={wine.id} className="'wine-card">
-                    <h2>{wine.wine}</h2>
-                    <img src={wine.image} alt=""/>
-                </div>
-            ))
-            }
+                <WineCard key={wine.id} wine={wine}/>
+            ))}
         </section>
     )
 }
